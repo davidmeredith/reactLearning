@@ -1,9 +1,8 @@
+# React tutorial
 
-# React tutorial 
+See: <https://reactjs.org/tutorial/tutorial.html> react tutorial.
 
-See: https://reactjs.org/tutorial/tutorial.html 
-
-```
+``` bash
 $ npm install -g create-react-app
 $ create-react-app my-app
 
