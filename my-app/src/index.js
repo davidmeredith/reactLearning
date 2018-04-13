@@ -2,10 +2,158 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 
+/*
+## React Elements
+- Smallest React building block describing a UI output of one or more Elements. 
+- Elements can represent individual DOM tags (eg. <div>) or user-defined 
+  React Components (e.g. <Welcome/>, components can refer to other components in their output). 
+- Can be defined in JSX - transpile to pure JS
+- JSX can accept JS expressions in {curly}
+- Wrap JSX in parenthesis to avoid automatic semi-colon insertion on new lines. 
+- Uses camelCase for element attributes, e.g. 'class' becomes className, onclick  becomes onClick
+
+## Components 
+- Are conceptually like functions, they accept inputs called 'props' and return react elements. 
+
+### Functional Components
+- For 'Controlled components' with no state 
+
+### Class Components 
+- Extend React.Component for stateful components 
+
+### Component Props
+- Readonly values and functions passed from calling component 
+- You should name props from the component's own point of view rather than from  the context from which
+it is being called (i.e. from the parent Component). 
+
+### Component State
+- Private mutable state, fully controlled and encapsulated by the component.  
+
+*/
+
+function ActionLink(props) {
+  function handleClick(e) {
+    // can't return false to prevent default behavior
+    // you need to call preventDefault explicitly 
+    e.preventDefault(); 
+    console.log("The link was clicked.");
+  }
+
+  // conditional rendering based on passed in prop
+  if(props.isLoggedIn){
+    return (
+      <a href="#willprinttoconsole" onClick={handleClick}>
+        Logged In user Click me (only prints to console)
+      </a>
+    );
+  }
+  return (
+    <a href="#willprinttoconsole" onClick={handleClick}>
+      Unknown user Click me (only prints to console)
+    </a>
+  );
+}
+
+
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // If no additional args are passed to handleClick, the
+    // following binding is necessary to make `this` work in the callback ()
+    // We don't use it here because handleClick defines additional args
+    // this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(exampleArg) {
+    console.log(exampleArg);
+    // we need to use the previous state.isToggleOn to calculate the new value of isToggleOn  
+    // so use the version of setState that accepts the function - it receives the 
+    // previous state as the first argument, and the props at the time the update is 
+    // applied as the second argument (optional):
+    this.setState( (prevState, props) => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      /* Its Common to have an event handler on the class such as handleClick */ 
+      /*
+      If you don't like using 'bind' in the constructor to bind 'this' in handleClick, 
+      OR you need to pass an argument to the event handler, you an use either a 
+      Function.prototype.bind approach as implemented below, or an Arrow function approach
+      (below lines are equivalent) 
+        <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+        <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+
+      (In both cases, the e argument representing the React event will be passed as a 
+        second argument after the ID. With an arrow function, we have to pass it 
+        explicitly, but with bind any further arguments are automatically forwarded.)  
+
+      React recommend bind approach or using experimental 'class fields syntax' 
+      e.g. see: https://reactjs.org/docs/handling-events.html 
+      */
+      <button onClick={this.handleClick.bind(this, 'myArg')}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    // the only place you can assign state is in the constructor
+    // in all other parts of class, call this.setState()
+    this.state = {date: new Date()};
+  }
+
+  componentDidMount() {
+    // timerID inherited? 
+    this.timerID = setInterval( () => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    // calling setState() React knows the state has changed and calls render() again  
+    // The given object is merged into the state (so you can update separate state vars 
+    // separately leaving othe state vars in-tact)
+    this.setState({ date: new Date() });
+    // If you need to calculate the new state from props, use the 2nd form of setState() 
+    // that accepts a function rather than an object - the function will receive the 
+    // previous state as the first argument, and the props at the time the update is 
+    // applied as the second argument:
+    // 
+    // Wrong:
+    // this.setState({
+    //   counter: this.state.counter + this.props.increment,
+    // });
+    //
+    // Correct:
+    // this.setState((prevState, props) => ({
+    //  counter: prevState.counter + props.increment
+    // }));
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+        <ActionLink isLoggedIn={true}/>
+      </div>
+    );
+  }
+}
+
 
 
 /* 
-//Since Square is a 'Controlled Component' we can use the 
+// Since Square is a 'Controlled Component' we can use the 
 // functional component notation instead.   
 class Square extends React.Component {
   // Square is an immutable 'Controlled Component' 
@@ -222,10 +370,16 @@ class Game extends React.Component {
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
+        <br/>
+        <div style={{display: "block"}}>
+          <Clock />
+          <Toggle />
+        </div>
       </div>
     );
   }
 }
+
 
 // ========================================
 
@@ -233,6 +387,7 @@ ReactDOM.render(
   <Game />,
   document.getElementById("root")
 );
+
 
 function calculateWinner(squares) {
   const lines = [
