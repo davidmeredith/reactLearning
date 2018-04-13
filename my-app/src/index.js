@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import { NumberList } from "./listsAndKeys"; 
 
 /*
 ## React Elements
@@ -95,8 +96,8 @@ class Toggle extends React.Component {
       React recommend bind approach or using experimental 'class fields syntax' 
       e.g. see: https://reactjs.org/docs/handling-events.html 
       */
-      <button onClick={this.handleClick.bind(this, 'myArg')}>
-        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      <button onClick={this.handleClick.bind(this, "myArg")}>
+        {this.state.isToggleOn ? "ON" : "OFF"}
       </button>
     );
   }
@@ -386,6 +387,13 @@ class Game extends React.Component {
 ReactDOM.render(
   <Game />,
   document.getElementById("root")
+);
+
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList  numbers={numbers} />,
+  document.getElementById("root2")
 );
 
 
