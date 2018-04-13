@@ -1,0 +1,26 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "settings": {
+      "ecmascript": 6,
+      "jsx": true
+    },
+    "plugins": [
+      "react"
+    ],
+    "extends": "eslint:recommended",
+    "rules": {
+      "semi": [1, "always"],
+      "no-unused-vars": 0,
+      "quotes": 1,
+      "camelcase": 1,
+      "semi-spacing": [1, {"before": false, "after": true}],
+      "space-before-function-paren": [1, "never"],
+      "spaced-comment": 1,
+      "no-console": 0,
+      "no-extra-semi":"error"
+    }
+}
