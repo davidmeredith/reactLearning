@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react-dom.js"></script>
+    <!-- Include babel compiler -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!--
+        script code with type='text/babel' will be compiled by babel on page load 
+        Also caters for JSX. 
+    -->
+    <script type="text/babel">
+
+      // simple rendering-only component that needs no state  
+      // note that props aren't mutable (only state)  
+      var ChatMessage = React.createClass({
+        render: function() {
+          return <p>{this.props.message}</p>;
+        }
+      });
+
+      var Chat = React.createClass({
+
+        // setup the inital values 
+        getInitialState: function() {
+          return {
+            text: '',
+            messages: []
+          };
+        },
+
+        submit: function(ev) {
+          // stops the page from refreshing
+          ev.preventDefault();
+
+          // Create a child component. 
+          // JSX attributes for a component get copied into the component's props
+          // in this example, message gets copied to ChatMessage.props.message
+          //var newMessage = this.state.text;
+          var newMessage = <ChatMessage message={this.state.text} />; 
+ 
+
+          // Only change state in component's setState function so that 
+          // React can queue and update UI updates dynamically (no direct DOM manipulation)
+          this.setState({
+            messages: this.state.messages.concat([newMessage]),
+            text: ''
+          });
+        },
+
+        updateInput: function(ev) {
+         this.setState({
+           text: ev.target.value
+         });
+        },
+
+        render: function() {
+          return <div>
+            <div>Messages should be displayed here</div>
+            <div>{this.state.messages}</div>
+            <form onSubmit={this.submit}>
+              <input onChange={this.updateInput} value={this.state.text} 
+                 type="text" placeholder="Your message" />
+              <input type="submit" value="Send" />
+            </form>
+          </div>;
+        }
+      });
+ 
+      ReactDOM.render(
+        <Chat />,
+        document.getElementById('app')
+      );
+ 
+    </script>
+  </body>
+</html>
