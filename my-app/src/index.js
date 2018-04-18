@@ -3,6 +3,21 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import { NumberList } from "./listsAndKeys"; 
 
+// ES6 import with ES6 export (e.g. "export class Clock extends React.Component")
+import { Clock } from "./Clock";
+// Node CommonJS import of JSX component (mixing of Common modules and ES6 modules - prob not a good idea)
+// Note that we are creating the instance of Clock so that React can use it in JSX. 
+//var Clock = require("./Clock").Clock; 
+
+// Node CommonJS import via require
+// Note that this imports the file as a module, it does not create instances 
+// of classes, e.g. in code you need to do var d1 = new DaveModule.Dave1(); 
+const DaveModule = require("./DaveFile"); 
+
+// CommonJS import via require
+// require returns an object, which references the value of module.exports for the given file.
+const foo = require("./foo"); 
+
 /*
 ## React Elements
 - Smallest React building block describing a UI output of one or more Elements. 
@@ -32,28 +47,6 @@ it is being called (i.e. from the parent Component).
 
 */
 
-function ActionLink(props) {
-  function handleClick(e) {
-    // can't return false to prevent default behavior
-    // you need to call preventDefault explicitly 
-    e.preventDefault(); 
-    console.log("The link was clicked.");
-  }
-
-  // conditional rendering based on passed in prop
-  if(props.isLoggedIn){
-    return (
-      <a href="#willprinttoconsole" onClick={handleClick}>
-        Logged In user Click me (only prints to console)
-      </a>
-    );
-  }
-  return (
-    <a href="#willprinttoconsole" onClick={handleClick}>
-      Unknown user Click me (only prints to console)
-    </a>
-  );
-}
 
 
 class Toggle extends React.Component {
@@ -99,54 +92,6 @@ class Toggle extends React.Component {
       <button onClick={this.handleClick.bind(this, "myArg")}>
         {this.state.isToggleOn ? "ON" : "OFF"}
       </button>
-    );
-  }
-}
-
-class Clock extends React.Component {
-  constructor(props) {
-    super(props);
-    // the only place you can assign state is in the constructor
-    // in all other parts of class, call this.setState()
-    this.state = {date: new Date()};
-  }
-
-  componentDidMount() {
-    // timerID inherited? 
-    this.timerID = setInterval( () => this.tick(), 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    // calling setState() React knows the state has changed and calls render() again  
-    // The given object is merged into the state (so you can update separate state vars 
-    // separately leaving othe state vars in-tact)
-    this.setState({ date: new Date() });
-    // If you need to calculate the new state from props, use the 2nd form of setState() 
-    // that accepts a function rather than an object - the function will receive the 
-    // previous state as the first argument, and the props at the time the update is 
-    // applied as the second argument:
-    // 
-    // Wrong:
-    // this.setState({
-    //   counter: this.state.counter + this.props.increment,
-    // });
-    //
-    // Correct:
-    // this.setState((prevState, props) => ({
-    //  counter: prevState.counter + props.increment
-    // }));
-  }
-
-  render() {
-    return (
-      <div>
-        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
-        <ActionLink isLoggedIn={true}/>
-      </div>
     );
   }
 }
@@ -323,6 +268,14 @@ class Game extends React.Component {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
 
+    // Sample Module usage 
+    let daveObj = new DaveModule.Dave1(); 
+    let dave2Obj = new DaveModule.Dave2(); 
+    let daveF = DaveModule.daveF(); 
+    let daveMessage  = "[["+daveF+" "+dave2Obj.getMessage() + daveObj.getMessage() + foo.myDateTime() + foo.circ(4) + foo.area(4)+"]]"; 
+
+    // let daveMessage = Dave.getMessage(); 
+
     // Let’s show the previous moves made in the game so far. 
     // React elements are first-class JS objects and we can store them 
     // or pass them around. To render multiple items in React, we pass 
@@ -368,6 +321,7 @@ class Game extends React.Component {
 
         </div>
         <div className="game-info">
+          <div>{daveMessage}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>
